@@ -2,7 +2,6 @@
 
 import sys
 import binascii
-import base64
 from string import ascii_letters
 from itertools import cycle, islice
 from math import sqrt
@@ -37,12 +36,6 @@ english_letter_probability = {
     "z": 0.00077
 }
 
-# string in, bytes out
-def hex2b64(hexstr):
-    data = binascii.unhexlify(hexstr)
-    encoded_data = base64.b64encode(data)
-    return encoded_data
-
 # bytes in, bytes out
 def xor(b_data, b_key):
     cyclic_key = bytes(islice(cycle(b_key),len(b_data)))
@@ -62,12 +55,17 @@ def score(string):
     return score
 
 def main(argv):
-    for char in ascii_letters:
+    decrypted = []
+    for letter in ascii_letters:
         b_data = binascii.unhexlify(argv[0])
-        b_key = char.encode('utf-8')
+        b_key = letter.encode('utf-8')
         xor_data = xor(b_data, b_key)
         string = xor_data.decode('utf-8')
-        print(f"char:{char} score:{score(string)} string:{string}")
+        string_score = score(string)
+        decrypted.append({"letter": letter, "string": string, "score": string_score})
+    top5_decrypted = sorted(decrypted, key = lambda i: i['score'], reverse=True)[:5] 
+    for e in top5_decrypted:
+        print(f"letter: {e['letter']}, string: {e['string']}, score: {e['score']}")
 
 if __name__ == "__main__":
     main(sys.argv[1:])
