@@ -1,10 +1,9 @@
 #!/bin/env/python3
 
-import sys
 import base64
 from itertools import combinations
 
-file = "/home/carl/projects/cryptopals/set1/6.txt"
+file = "6.txt"
 
 # 2. Write a function to compute the edit distance/Hamming distance between two strings.
 #    The Hamming distance is just the number of differing bits.
@@ -25,7 +24,7 @@ def main():
         #    Normalize this result by dividing by KEYSIZE.
         # 4. The KEYSIZE with the smallest normalized edit distance is probably the key.
         #    You could proceed perhaps with the smallest 2-3 KEYSIZE values. Or take 4 KEYSIZE blocks instead of 2 and average the distances.
-        keysizes = []
+        normalized_distances = []
         for keysize in keysizes:
             bytes_slice_1 = bytes_data[0:keysize]
             bytes_slice_2 = bytes_data[keysize:2*keysize]
@@ -36,7 +35,15 @@ def main():
             for bytes1, bytes2 in comb:
                 distances.append(hamming_distance(bytes1, bytes2) / keysize)
             normalized_distance = sum(distances) / len(distances)
-            print(normalized_distance)
+            normalized_distances.append({ "distance": normalized_distance, "keysize": keysize})
+        possible = sorted(normalized_distances, key=lambda k: k['distance'])[0]
+        print(possible["keysize"])
+        
+        keysize_blocks = []
+        for i in range(0, len(bytes_data), possible["keysize"]):
+        	keysize_blocks.append(bytes_data[i:i+possible["keysize"]])
+        	
+        
 
 if __name__ == "__main__":
     main()
