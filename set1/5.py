@@ -21,7 +21,7 @@ def main(argv):
         xor_data = xor(b_data, b_key)
         print(
             f"key: {key}\n",
-            f"data: {data}\n", 
+            f"data: {data}\n",
             f"xor: {xor_data.hex()}"
         )
 
